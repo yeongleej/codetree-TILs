@@ -2,6 +2,7 @@ from collections import deque
 
 n = int(input())
 g = [list(map(int, input().split())) for _ in range(n)]
+ng = [[0]*n for _ in range(n)]
 
 dx = [0, 0, 1, -1]
 dy = [-1, 1, 0, 0]
@@ -30,30 +31,19 @@ def bfs(sx, sy, num):
     
 # turn 십자가
 def turn_ten():
-    ng = [[0]*n for _ in range(n)]
+    # ng = [[0]*n for _ in range(n)]
     for i in range(n):
         for j in range(n):
-            # 1사분면
-            if i < n//2 and j == n//2:
+            # 세로줄
+            if j == n//2:
                 ng[j][i] = g[i][j]
-            # 2사분면
-            elif i == n//2 and j > n//2:
+            # 가로줄
+            elif i == n//2:
                 ng[(n-1)-j][i] = g[i][j]
-            # 3사분면
-            elif i == n//2 and j < n//2:
-                ng[(n-1)-j][i] = g[i][j]
-            # 4사분면
-            elif i > n//2 and j == n//2:
-                ng[j][i] = g[i][j]
-            else:
-                ng[i][j] = g[i][j]
-    for i in range(n):
-        for j in range(n):
-            g[i][j] = ng[i][j]
 
 # turn box
 def turn_box():
-    ng = [[0]*n for _ in range(n)]
+    # ng = [[0]*n for _ in range(n)]
     for i in range(n):
         for j in range(n):
             # 1사분면
@@ -70,13 +60,21 @@ def turn_box():
                 ng[j][n//2+n-i] = g[i][j]
             else:
                 ng[i][j] = g[i][j]
-    for i in range(n):
-        for j in range(n):
-            g[i][j] = ng[i][j]
 
 # turn_box()
 # for i in range(n):
 #     print(g[i])
+def turn_square(sx, sy, size):
+    # ng = [[0]*n for _ in range(n)]
+    for x in range(sx, sx+size):
+        for y in range(sy, sy+size):
+            # 1) (sx, sy)를 (0, 0)으로 옮겨 주기
+            ox, oy = x - sx, y - sy
+            # 2) 변환 후 회전 좌표는 (x, y) -> (y, (size-1)-x)
+            rx, ry = oy, size-1-ox
+            # 3) 다시 (sx, sy)를 더해줌
+            ng[rx+sx][ry+sy] = g[x][y]
+
 
 
 def group_cal():
@@ -129,8 +127,15 @@ group_cal()
 
 # 1~3회전
 for i in range(3):
+    ng = [[0]*n for _ in range(n)]
     turn_ten()
-    turn_box()
+    turn_square(0, 0, n//2)
+    turn_square(0, n//2+1, n//2)
+    turn_square(n//2+1, 0, n//2)
+    turn_square(n//2+1, n//2+1, n//2)
+    for x in range(n):
+        for y in range(n):
+            g[x][y] = ng[x][y]
     # for j in range(n):
     #     print(g[j])
     group_cal()
