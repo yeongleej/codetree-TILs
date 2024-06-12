@@ -86,17 +86,19 @@ def move():
 def get_pos(x, y, depth):
     global ans, visited, hx, hy
     if g[x][y] == 1:
-        # print(depth)
+        # print(ans, depth*depth)
         ans += depth*depth
         hx, hy = x, y
         return 
     for i in range(4):
         nx = x + dx[i]
         ny = y + dy[i]
-        if in_range(nx, ny) and not visited[nx][ny] and (g[nx][ny] == 2 or g[nx][ny] == 1):
-            visited[nx][ny] = True
-            get_pos(nx, ny, depth+1)
-            visited[nx][ny] = False
+        if in_range(nx, ny) and not visited[nx][ny]:
+            if g[nx][ny] == 2 or (depth > 1 and g[nx][ny] == 1) or (g[x][y]==2 and g[nx][ny]==1):
+                visited[nx][ny] = True
+                get_pos(nx, ny, depth+1)
+                visited[nx][ny] = False
+
 
 
 def ball_game(sx, sy, d):
@@ -110,6 +112,7 @@ def ball_game(sx, sy, d):
             # print(nx, ny)
             get_pos(nx, ny, 1)
 
+
             # 머리랑 꼬리 변경(방향 전환)
             for j in range(m):
                 team = teams[j]
@@ -121,7 +124,7 @@ def ball_game(sx, sy, d):
                     g[h[0]][h[1]] = 1
                     g[e[0]][e[1]] = 3
                     break
-            break
+            return
         
 
 
@@ -146,7 +149,18 @@ while r <= k:
         isTurn = True
     move()
 
+    # print(r, sx, sy ,d)
+    # if r >= 10:
+    #     for i in range(n):
+    #         print(g[i])
+    #     print()
+
+
     ball_game(sx, sy, d)
+
+    # if r >= 10:
+    #     for i in range(n):
+    #         print(g[i])
 
     r += 1
     if isTurn:
