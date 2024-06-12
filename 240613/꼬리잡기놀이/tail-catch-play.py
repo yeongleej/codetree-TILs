@@ -38,19 +38,41 @@ def find_team(tNum, sx, sy):
 def move():
     for t in range(m):
         s = teams[t][0]
-        e = teams[t][1]
+        isMove = False
         # 머리 이동
         for i in range(4):
             nx = s[0] + dx[i]
             ny = s[1] + dy[i]
-            if in_range(nx, ny) and g[nx][ny] == 4:
-                g[nx][ny] = 1
-                g[s[0]][s[1]] = 2
-                teams[t][0][0] = nx
-                teams[t][0][1] = ny
-                break
+            if in_range(nx, ny):
+                if g[nx][ny] == 4:
+                    g[nx][ny] = 1
+                    g[s[0]][s[1]] = 2
+                    teams[t][0][0] = nx
+                    teams[t][0][1] = ny
+                    isMove = True
+                    break
+                # 머리의 다음 이동 위치가 꼬리
+                elif g[nx][ny] == 3:
+                    # 꼬리 위치 찾기
+                    for j in range(4):
+                        tx = nx + dx[j]
+                        ty = ny + dy[j]
+                        if in_range(tx, ty) and g[tx][ty] == 2:
+                            g[nx][ny] = 1
+                            g[s[0]][s[1]] = 2
+                            teams[t][0][0] = nx
+                            teams[t][0][1] = ny
+                            g[tx][ty] = 3
+                            teams[t][1][0] = tx
+                            teams[t][1][1] = ty
+                            break
+                    break
+
+        e = teams[t][1]
         # 꼬리 이동
         for i in range(4):
+            if not isMove:
+                break
             nx = e[0] + dx[i]
             ny = e[1] + dy[i]
             if in_range(nx, ny) and g[nx][ny] == 2:
@@ -58,6 +80,7 @@ def move():
                 g[e[0]][e[1]] = 4
                 teams[t][1][0] = nx
                 teams[t][1][1] = ny
+                break
 
 # dfs
 def get_pos(x, y, depth):
@@ -93,6 +116,10 @@ def ball_game(sx, sy, d):
                 h = team[0]
                 if h[0] == hx and h[1] == hy:
                     teams[j][0], teams[j][1] = teams[j][1], teams[j][0]
+                    h = teams[j][0]
+                    e = teams[j][1]
+                    g[h[0]][h[1]] = 1
+                    g[e[0]][e[1]] = 3
                     break
             break
         
@@ -118,7 +145,9 @@ while r <= k:
     if r % n == 0:
         isTurn = True
     move()
+
     ball_game(sx, sy, d)
+
     r += 1
     if isTurn:
         ts = (ts + 1) % 4
