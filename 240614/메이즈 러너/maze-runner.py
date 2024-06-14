@@ -131,6 +131,42 @@ def rotate(sx, sy, s):
         for j in range(N):
             g[i][j] = ng[i][j]
 
+def rotate_square(sx, sy, square_size):
+    global ex, ey
+    ng = [[0]*N for _ in range(N)]
+    for i in range(N):
+        for j in range(N):
+            ng[i][j] = g[i][j]
+    # 우선 정사각형 안에 있는 벽들을 1 감소시킵니다.
+    for x in range(sx, sx + square_size):
+        for y in range(sy, sy + square_size):
+            if g[x][y]: 
+                g[x][y] -= 1
+
+    # 정사각형을 시계방향으로 90' 회전합니다.
+    for x in range(sx, sx + square_size):
+        for y in range(sy, sy + square_size):
+            # Step 1. (sx, sy)를 (0, 0)으로 옮겨주는 변환을 진행합니다. 
+            ox, oy = x - sx, y - sy
+            # Step 2. 변환된 상태에서는 회전 이후의 좌표가 (x, y) . (y, square_n - x - 1)가 됩니다.
+            rx, ry = oy, square_size - ox - 1
+            # Step 3. 다시 (sx, sy)를 더해줍니다.
+            ng[rx + sx][ry + sy] = g[x][y]
+
+    # next_board 값을 현재 board에 옮겨줍니다.
+    for x in range(sx, sx + square_size):
+        for y in range(sy, sy + square_size):
+            g[x][y] = ng[x][y]
+    
+    # 출구에도 회전을 진행합니다.
+    if sx <= ex and ex < sx + square_size and sy <= ey and ey < sy + square_size:
+        # Step 1. (sx, sy)를 (0, 0)으로 옮겨주는 변환을 진행합니다. 
+        ox, oy = ex - sx, ey - sy
+        # Step 2. 변환된 상태에서는 회전 이후의 좌표가 (x, y) . (y, square_n - x - 1)가 됩니다.
+        rx, ry = oy, square_size - ox - 1
+        # Step 3. 다시 (sx, sy)를 더해줍니다.
+        ex, ey = rx + sx, ry + sy
+
 t = 1            
 while t <= K:
     if len(pList) == 0:
@@ -148,7 +184,8 @@ while t <= K:
     sx, sy, s = find_square()
     # print(sx, sy, s)
     # 회전
-    rotate(sx, sy, s)
+    # rotate(sx, sy, s)
+    rotate_square(sx, sy, s)
 
     # print(ex, ey)
     # for i in range(N):
