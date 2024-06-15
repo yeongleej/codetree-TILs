@@ -5,8 +5,23 @@ INF = 1e9
 
 g = []
 distance = []
-r = [[] for _ in range(30001)]
+isMade = [False]*30005 # 여행상품이 만들어진적 있는지 저장합니다.
+isCancel = [False]*30005  # 여행상품이 취소되었는지 저장합니다.
+h = []
 N, M = 0, 0
+
+class rev:
+    def __init__(self, idx, r, dest, profit):
+        self.idx = idx
+        self.r = r
+        self.dest = dest
+        self.profit = profit
+    def __lt__(self, other):
+        if self.profit == other.profit:
+            return self.idx < other.idx
+        return self.profit > other.profit
+    def __str__(self):
+        return "p: "+str(self.profit)+" idx: "+str(self.idx)+" r: "+str(self.r)+" dest: "+str(self.dest)
 
 def make_g(irr):
     global N, M, g
@@ -40,33 +55,33 @@ def dijkstra(start):
                 heapq.heappush(q, (cost, j[0]))
 
 
-def make_r(irr):
-    i, rev, dest = irr[1], irr[2], irr[3]
-    r[i].append(rev)
-    r[i].append(dest)
+def make_r(idx, r,dest):
+    isMade[idx] = True
+    profit = r - distance[dest]
+    heapq.heappush(h, rev(idx, r, dest, profit))
 
 def remove_r(idx):
-    r[idx] = []
+    if isMade[idx]:
+        isCancel[idx] = True
 
 def sell():
-    sList = []
-    for i in range(1, 30001):
-        if len(r[i]) == 0:
-            continue
-        rev, dest = r[i]
+    while h:
+        p = h[0]
+        if p.profit < 0:
+            break
+        heapq.heappop(h)
+        if not isCancel[p.idx]:
+            return p.idx
+    return -1
 
-        # 도달 불가
-        if distance[dest] == INF:
-            continue
-
-        if rev - distance[dest] >= 0:
-            sList.append((rev-distance[dest], i))
-    if len(sList) == 0:
-        return -1
-    # print(sList)
-    sList.sort(key=lambda x : (-x[0], x[1]))
-    remove_r(sList[0][1])
-    return sList[0][1]    
+def changeStart(start):
+    dijkstra(start)
+    # print(distance)
+    tmp = []
+    while h:
+        tmp.append(heapq.heappop(h))
+    for p in tmp:
+        make_r(p.idx, p.r, p.dest)
 
 Q = int(input())
 while Q > 0:
@@ -77,14 +92,13 @@ while Q > 0:
         dijkstra(0)
         # print(distance)
     elif type == 200:
-        make_r(irr)
+        make_r(irr[1], irr[2], irr[3])
     elif type == 300:
         remove_r(irr[1])
     elif type == 400:
         print(sell())
     else:
         start = irr[1]
-        dijkstra(start)
-        # print(distance)
+        changeStart(start)
 
     Q -= 1
