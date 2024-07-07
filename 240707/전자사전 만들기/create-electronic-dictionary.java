@@ -26,7 +26,7 @@ public class Main {
         Collections.sort(wList);
 
         // System.out.println(wMap);
-        // System.out.println(wList);
+        // System.out.println(wList.get(86));
 
         // System.out.println("aab".compareTo("aaa")); 1
         // System.out.println("aaa".compareTo("aab")); -1
@@ -47,7 +47,7 @@ public class Main {
         int e = N;
         List<String> pList = new ArrayList<>();
 
-        while(s < e) {
+        while(s <= e) {
             int mid = (s+e) / 2;
 
             // pWord가 더 큼 : e를 줄임
