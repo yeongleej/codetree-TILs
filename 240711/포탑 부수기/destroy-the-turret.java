@@ -13,7 +13,7 @@ public class Main {
     // 포탄던지기 방향 8방향
     static int[] tdx = {0, 1, 0, -1, -1, -1, 1, 1};
     static int[] tdy = {1, 0, -1, 0, -1, 1, -1, 1};
-    static class Potop {
+    static class Potop implements Comparable<Potop>{
         int power, lastTime, x, y;
         boolean isPre;
         public Potop(int power, int lastTime, int x, int y, boolean isPre) {
@@ -23,12 +23,25 @@ public class Main {
             this.y = y;
             this.isPre = isPre;
         }
+        @Override
+        public int compareTo(Potop other) {
+            // 가장 약한 공격자 뽑기 우선순위
+            // 파워는 약한 순
+            if(this.power != other.power) return this.power - other.power;
+            // 시간은 가장 최근의 시간(큰 순) 
+            if(this.lastTime != other.lastTime) return other.lastTime - this.lastTime;
+            // (행+열)은 큰 순
+            if(this.x+this.y != other.x+other.y) return (other.x+other.y) - (this.x+this.y);
+            // 열은 큰 순
+            return other.y - this.y;
+        }
         public String toString(){
             return "power: "+this.power+", lastTime: "+ this.lastTime + ", isPre: "+this.isPre + ", ("+x+","+y+")";
         }
     }
     static Potop weak;
     static Potop strong;
+    static List<Potop> liveList;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -68,9 +81,22 @@ public class Main {
 
         // K번 진행
         for(int k=1; k<K+1; k++) {
-            if(!find()) {
+            // 살아있는 포탑 정리
+            liveList = new ArrayList<>();
+            for(int i=0; i<N; i++) {
+                for(int j=0; j<M; j++) {
+                    if(p[i][j].power > 0) {
+                        liveList.add(p[i][j]);
+                    }
+                }
+            }
+            // 살아있는 포탑이 1개 이하면 중단
+            if(liveList.size() <= 1){
                 break;
             }
+
+            find();
+
             // System.out.println("w: "+weak);
             // System.out.println("s: "+strong);
             weak.power += (N+M);
@@ -111,7 +137,7 @@ public class Main {
         }
     }
     // 공격자와 대상자 찾기
-    public static boolean find() {
+    public static void find() {
         // 1. 부서진 포탑 정리 (포탑 정보 갱신해서 다시 PQ에 넣기)
         PriorityQueue<Potop> wpq = new PriorityQueue<>(new Comparator<Potop>() {
             @Override
@@ -143,23 +169,27 @@ public class Main {
                 return p2.power - p1.power;
             }  
         });
-        int cnt = 0;
-        for(int i=0; i<N; i++) {
-            for(int j=0; j<M; j++) {
-                if(p[i][j].power != 0){
-                    wpq.add(p[i][j]);
-                    spq.add(p[i][j]);
-                    cnt++;
-                }
-            }
-        }
-        if(cnt <= 1) {
-            return false;
-        }
+        // int cnt = 0;
+        // for(int i=0; i<N; i++) {
+        //     for(int j=0; j<M; j++) {
+        //         if(p[i][j].power != 0){
+        //             wpq.add(p[i][j]);
+        //             spq.add(p[i][j]);
+        //             cnt++;
+        //         }
+        //     }
+        // }
+        // if(cnt <= 1) {
+        //     return false;
+        // }
+
+        Collections.sort(liveList);
+
         // 2. 공격자와 대상자 찾기
-        weak = wpq.peek();
-        strong = spq.peek();
-        return true;
+        // weak = wpq.peek();
+        // strong = spq.peek();
+        weak = liveList.get(0);
+        strong = liveList.get(liveList.size()-1);   // 대상자 조건은 공격자와 반대
     }
     static class Pos {
         int x, y;
@@ -250,7 +280,7 @@ public class Main {
         strong.isPre = true;
     }
 
-    // 포탑 정비
+    // 포탑 부서짐 & 포탑 정비
     public static void reward() {
         for(int i=0; i<N; i++) {
             for(int j=0; j<M; j++) {
