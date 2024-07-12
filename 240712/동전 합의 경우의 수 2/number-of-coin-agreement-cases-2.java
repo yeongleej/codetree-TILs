@@ -21,16 +21,18 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             coins[i] = Integer.parseInt(st.nextToken());
         }
-        
+
+        int ans = Integer.MAX_VALUE;
         for(int i = 1; i<N+1; i++) {
             int v = coins[i];
             for(int j=v; j<K+1; j++) {
-                dp[j] = dp[j - v]+1;
+                dp[j] = dp[j-v]+1;
             }
             // System.out.println(v+": "+Arrays.toString(dp));
+            ans = Math.min(ans, dp[K]);
         }
 
-        System.out.println(dp[K]);
+        System.out.println(ans);
 
     }
 }
