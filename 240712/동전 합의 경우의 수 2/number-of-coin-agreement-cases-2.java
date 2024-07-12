@@ -33,7 +33,11 @@ public class Main {
             }
             // System.out.println(v+": "+Arrays.toString(dp));
         }
-        System.out.println(dp[K]);
+        if(dp[K] == 10001){
+            System.out.println(-1);
+        } else{
+            System.out.println(dp[K]);
+        }
 
     }
 }
