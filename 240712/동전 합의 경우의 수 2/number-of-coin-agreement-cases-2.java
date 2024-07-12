@@ -5,10 +5,9 @@ public class Main {
     
     static int N;
     static int K;
-    static List<Integer> coins;
-    static int[][] dp;
-    static int MAXV = 10001;
-    
+    static int[] coins;
+    static int[] dp;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -16,38 +15,22 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        coins = new ArrayList<>();
-        coins.add(0);
+        coins = new int[N+1];
+        dp = new int[K+1];
         for(int i=1; i<N+1; i++) {
-            coins.add(Integer.parseInt(br.readLine()));
+            st = new StringTokenizer(br.readLine());
+            coins[i] = Integer.parseInt(st.nextToken());
         }
-        Collections.sort(coins);
-
-        // 초기화
-        dp = new int[N+1][K+1];
-        for(int i=1; i<N+1; i++) {
-            for(int j=0; j<K+1; j++) {
-                if(j % coins.get(i) == 0){
-                    dp[i][j] = j / coins.get(i);
-                } 
+        
+        for(int i = 1; i<N+1; i++) {
+            int v = coins[i];
+            for(int j=v; j<K+1; j++) {
+                dp[j] = dp[j - v]+1;
             }
+            // System.out.println(v+": "+Arrays.toString(dp));
         }
 
-
-        for(int i=1; i<N+1; i++) {
-            int v = coins.get(i);
-            for(int j=v+1; j<K+1; j++) {
-                if(dp[i-1][j-v] != 0 && dp[i][j] != 0) {
-                    dp[i][j] = Math.min(dp[i][j], dp[i-1][j-v]+1);
-                }
-            }
-        }
-
-
-        // for(int i=1; i<N+1; i++) {
-        //     System.out.println(Arrays.toString(dp[i]));
-        // }
-        System.out.println(dp[N][K]);
+        System.out.println(dp[K]);
 
     }
 }
