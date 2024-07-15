@@ -37,6 +37,6 @@ public class Main {
         }
 
         // System.out.println((1e9+7));
-        System.out.println(ans % 1000000000);
+        System.out.println(ans % 1000000007);
     }
 }
