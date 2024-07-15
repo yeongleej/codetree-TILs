@@ -32,7 +32,7 @@ public class Main {
             }
         }
 
-        int ans = 0;
+        long ans = 0;
         for(int j=0; j<10; j++) {
             ans += dp[N][j];
         }
