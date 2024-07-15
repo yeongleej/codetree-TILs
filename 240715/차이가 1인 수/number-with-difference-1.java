@@ -4,14 +4,14 @@ import java.io.*;
 public class Main {
 
     static int N;
-    static int[][] dp;
+    static long[][] dp;
 
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         N = Integer.parseInt(st.nextToken());
-        dp = new int[N+1][10];
+        dp = new long[N+1][10];
         for(int i=1; i<10; i++) {
             dp[1][i] = 1;
         }
