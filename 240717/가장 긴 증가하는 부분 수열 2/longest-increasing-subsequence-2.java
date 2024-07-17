@@ -35,18 +35,16 @@ public class Main {
     }
     public static int bSearch(int num) {
         int s = 0;
-        int e = dp.size()-1;
-        int ans = 0;
+        int e = dp.size();
 
         while(s < e) {
             int mid = (s + e) / 2;
             if(dp.get(mid) <= num) {
-                ans = mid;
                 s = mid +1;
             } else{
                 e = mid -1;
             }
         }
-        return ans;
+        return e;
     }
 }
