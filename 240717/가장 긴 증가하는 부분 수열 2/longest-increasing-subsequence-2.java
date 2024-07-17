@@ -36,14 +36,14 @@ public class Main {
     }
     public static int bSearch(int num) {
         int s = 0;
-        int e = dp.size();
-        int ans = 0;
+        int e = dp.size()-1;
+        // int ans = 0;
 
-        while(s <= e) {
+        while(s < e) {
             int mid = (s + e) / 2;
             if(dp.get(mid) >= num) {
-                ans = mid;
-                e = mid - 1;
+                // ans = mid;
+                e = mid;
             } else{
                 s = mid + 1;
             }
@@ -51,6 +51,6 @@ public class Main {
         // System.out.println(dp);
         // System.out.println(num+": "+e+" ");
         // System.out.println(num+": "+ans+" ");
-        return ans;
+        return e;
     }
 }
