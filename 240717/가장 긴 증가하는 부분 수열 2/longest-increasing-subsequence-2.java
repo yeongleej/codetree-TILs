@@ -40,7 +40,7 @@ public class Main {
 
         while(s < e) {
             int mid = (s + e) / 2;
-            if(dp.get(mid) >= num) 
+            if(dp.get(mid) >= num) {
                 e = mid;
             } else{
                 s = mid + 1;
