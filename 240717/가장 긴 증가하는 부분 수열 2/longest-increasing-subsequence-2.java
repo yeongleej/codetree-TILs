@@ -40,13 +40,12 @@ public class Main {
 
         while(s < e) {
             int mid = (s + e) / 2;
-            if(dp.get(mid) >= num) {
-                ans = mid;
-                e = mid -1;
+            if(dp.get(mid) >= num) 
+                e = mid;
             } else{
                 s = mid + 1;
             }
         }
-        return ans;
+        return e;
     }
 }
