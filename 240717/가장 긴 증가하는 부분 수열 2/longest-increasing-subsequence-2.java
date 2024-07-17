@@ -35,8 +35,8 @@ public class Main {
     }
     public static int bSearch(int num) {
         int s = 0;
-        int e = dp.size();
-        int ans = e;
+        int e = dp.size()-1;
+        int ans = e+1;
 
         while(s < e) {
             int mid = (s + e) / 2;
