@@ -29,14 +29,14 @@ public class Main {
                 dp.set(idx, arr[i]);
             }
         }
-
+        
+        // System.out.println();
         System.out.println(dp.size());
 
     }
     public static int bSearch(int num) {
         int s = 0;
-        int e = dp.size()-1;
-        int ans = e;
+        int e = dp.size();
 
         while(s < e) {
             int mid = (s + e) / 2;
@@ -46,6 +46,9 @@ public class Main {
                 s = mid + 1;
             }
         }
-        return e;
+        // System.out.println(dp);
+        // System.out.println(num+": "+e+" ");
+        // System.out.println(num+": "+ans+" ");
+        return s;
     }
 }
