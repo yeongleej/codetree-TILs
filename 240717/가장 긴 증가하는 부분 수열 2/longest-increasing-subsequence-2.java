@@ -39,10 +39,10 @@ public class Main {
 
         while(s < e) {
             int mid = (s + e) / 2;
-            if(dp.get(mid) <= num) {
-                s = mid +1;
+            if(dp.get(mid) >= num) {
+                e = mid;
             } else{
-                e = mid -1;
+                s = mid + 1;
             }
         }
         return e;
