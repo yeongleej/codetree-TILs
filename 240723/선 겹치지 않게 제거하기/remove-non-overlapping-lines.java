@@ -40,20 +40,26 @@ public class Main {
             nums.add(new State(a, b));
         }
         Collections.sort(nums);
-        // System.out.println(nums);
 
-        dp = new int[N+1];
-        for(int i=N-1; i>=0; i--) {
-            int cnt = 0;
-            for(int j=i-1; j>=0; j--){
-                if(nums.get(i).b <= nums.get(j).b) {
-                    cnt += 1;
+        dp = new int[N];
+
+        for(int i=0; i<N; i++) {
+            dp[i] = 1;  // i번째 직선 선택
+
+            for(int j=0; j<i; j++) {
+                // i보다 아래에 있는 직선들 중에 포함 시킬 수 있는 직선의 개수 구함
+                if(nums.get(i).b > nums.get(j).b){
+                    dp[i] = Math.max(dp[i], dp[j]+1);
                 }
             }
-            dp[i] = Math.max(dp[i+1], cnt);
         }
-        System.out.println(dp[0]);
-
+        int maxLines = 0;
+        for(int i=0; i<N; i++) {
+            if(maxLines < dp[i]){
+                maxLines = dp[i];
+            }
+        }
+        System.out.println(N-maxLines);
 
 
 
