@@ -29,18 +29,19 @@ public class Main {
             int num = Integer.parseInt(st.nextToken());
             int pos = Integer.parseInt(st.nextToken());
             arr[pos] = num;
+            
         } 
 
         // System.out.println(Arrays.toString(arr));
-        // System.out.println(Arrays.toString(mrr));
-        int ans = 0;
+//         System.out.println(Arrays.toString(mrr));
+        int ans = -1;
         for(int i=1; i<N+1; i++) {
             if(arr[i]==1){
                 ans = i;
                 break;
             } else if(arr[i]==0){
                 arr[i] = 1;
-                // System.out.println(Arrays.toString(arr));
+//                System.out.println(i + ": "+Arrays.toString(arr));
                 if(isCheck()){
                     ans = i;
                     break;
@@ -59,22 +60,32 @@ public class Main {
         for(int i=1; i<N+1; i++){
             trr[i] = arr[i];
         }
-
+        
+        // 절대값 기록
         for(int i=0; i<M; i++) {
-            boolean flag = true;
-            for(int j=1; j<N+1; j++){
-                if(trr[j]==mrr[i]){
-                    irr[i] = j;
-                    break;
-                } else if(trr[j] == 0 && flag){
-                    irr[i] = j;
-                    flag = false;
-                }
+        	for(int j=1; j<N+1; j++) {
+        		if(arr[j]==mrr[i]) {
+        			irr[i] = j;
+        			break;
+        		}
+        	}
+        }
+
+        int pre = 1;
+        for(int i=0; i<M; i++) {
+            if(irr[i] == 0) {
+            	for(int j=pre; j<N+1; j++){
+            		if(trr[j] == 0){
+            			irr[i] = j;
+            			break;
+            		}
+            	}
             }
             trr[irr[i]] = mrr[i];
+            pre = irr[i];
         }
-        // System.out.println(Arrays.toString(trr));
-        // System.out.println(Arrays.toString(irr));
+//         System.out.println(Arrays.toString(trr));
+//         System.out.println(Arrays.toString(irr));
         for(int i=0; i<M-1; i++){
             if(irr[i] > irr[i+1]){
                 return false;
