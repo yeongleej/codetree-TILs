@@ -8,7 +8,7 @@ public class Main {
     static int N;
     static int ans;
     static int tmp;
-    static boolean isOk;
+    static boolean isInside;
     static int[] dx = {-1, 1, 0, 0};
     static int[] dy = {0, 0, -1, 1};
 
@@ -29,13 +29,16 @@ public class Main {
         ans = 0;
         for(int i=0; i<100; i++) {
             for(int j=0; j<100; j++){
-                if(g[i][j] == 0 && !visited[i][j]){
+                if(!visited[i][j]){
                     visited[i][j] = true;
                     tmp = 0;
-                    isOk = false;
-                    dfs(i, j);
-                    if(isOk){
+                    isInside = true;
+                    dfs(i, j, g[i][j]);
+                    if(g[i][j] == 1){
                         ans += tmp;
+                    }
+                    else if(isInside){
+                        ans -= tmp;
                     }
                 }
             }
@@ -43,37 +46,36 @@ public class Main {
 
         System.out.println(ans);
     }
-    public static boolean isSides(int x, int y){
-        return x==0 || x==99 || y==0 || y==99;
-    }
     public static boolean isRange(int x, int y){
         return x>=0 && x<100 && y>=0 && y<100;
     }
-    public static void dfs(int x, int y){
-        if(isSides(x, y)){
-            isOk = true;
+    public static boolean isSides(int x, int y){
+        return x==0 || x==99 || y==0 || y==99;
+    }
+    public static void dfs(int x, int y, int color){
+        if(color == 0 && isSides(x, y)){
+            isInside = false;
         }
-        // 가장 자리 개수 구하기
+
+        // 가장 자리 탐색
         for(int i=0; i<4; i++){
             int nx = x + dx[i];
             int ny = y + dy[i];
-            if(isRange(nx, ny) && g[nx][ny] == 1){
-                tmp++;
-                if(isSides(nx, ny)){
-                    if((x==0&&y==0) || (x==0&&y==99) || (x==99&&y==0) || (x==99&&y==99)){
-                        ans += 2;
-                    } else{
-                        ans += 1;
-                    }
+            if(isRange(nx, ny)){
+                if(g[nx][ny] != color){
+                    tmp++;
                 }
+            } else{
+                tmp++;  
             }
         }
+        // 방문
         for(int i=0; i<4; i++){
             int nx = x + dx[i];
             int ny = y + dy[i];
-            if(isRange(nx, ny) && g[nx][ny] == 0 && !visited[nx][ny]){
+            if(isRange(nx, ny) && g[nx][ny]==color && !visited[nx][ny]){
                 visited[nx][ny] = true;
-                dfs(nx, ny);
+                dfs(nx, ny, color);
             }
         }
     }
