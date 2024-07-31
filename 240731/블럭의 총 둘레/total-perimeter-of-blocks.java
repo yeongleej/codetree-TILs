@@ -59,6 +59,13 @@ public class Main {
             int ny = y + dy[i];
             if(isRange(nx, ny) && g[nx][ny] == 1){
                 tmp++;
+                if(isSides(nx, ny)){
+                    if((x==0&&y==0) || (x==0&&y==99) || (x==99&&y==0) || (x==99&&y==99)){
+                        ans += 2;
+                    } else{
+                        ans += 1;
+                    }
+                }
             }
         }
         for(int i=0; i<4; i++){
