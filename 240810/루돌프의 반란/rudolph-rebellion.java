@@ -9,6 +9,7 @@ public class Main {
     static int[][] g;
     static int[] dx = {-1, 0, 1, 0};
     static int[] dy = {0, 1, 0, -1};
+    static int nowTurn;
 
     static class Santa {
         int num, score, x, y, isDown;
@@ -54,28 +55,32 @@ public class Main {
             sMap.put(num, s);
         }
 
-        for(int m=0; m<M; m++){
+        for(int m=1; m<M+1; m++){
             // 살아있는 산타 확인
             if(!checkSanta()) break;
+            nowTurn = m;
 
-            // System.out.println("루돌프 이동 전 rx:"+rx+", ry:"+ry);
-            // System.out.println("산타이동 전");
-            // printG();
+//            System.out.println(m+" => 루돌프 이동 전 rx:"+rx+", ry:"+ry);
+//            System.out.println("산타이동 전");
+//            printG();
 
             // 루돌프 이동
             moveRu();
-            // System.out.println("루돌프 이동 후 rx:"+rx+", ry:"+ry);
+//             System.out.println("루돌프 이동 후 rx:"+rx+", ry:"+ry);
 
             // 산타 이동
             moveSanta();
-            // System.out.println("산타이동 후");
-            // printG();
+//             System.out.println("산타이동 후");
+//             printG();
 
             // // 살아있는 산타 1점씩 증가
             addScore();
+//            for(Santa s: sList) {
+//            	System.out.println(s);
+//            }
         }
-        for(Santa s: sList){
-            System.out.print(s.score+" ");
+        for(int i=1; i<P+1; i++){
+            System.out.print(sMap.get(i).score+" ");
         }
         System.out.println();
     }
@@ -90,7 +95,7 @@ public class Main {
     public static boolean checkSanta(){
         for(int i=1; i<N+1; i++){
             for(int j=1; j<N+1; j++){
-                if(g[i][j] == 1){
+                if(g[i][j] != 0){
                     return true;
                 }
             }
@@ -155,7 +160,7 @@ public class Main {
     }
     public static void accident(int num, int[] d, int point){
         Santa s = sMap.get(num);
-        // System.out.println("충돌 산타: "+s.num+"("+s.x+","+s.y+")");
+//        System.out.println("충돌 산타: "+s.num+"("+s.x+","+s.y+")");
         int nx = s.x + d[0]*point;
         int ny = s.y + d[1]*point;
         if(inRange(nx, ny)){
@@ -168,7 +173,7 @@ public class Main {
         g[s.x][s.y] = 0;
         s.x = nx;
         s.y = ny;
-        s.isDown = -2;
+        s.isDown = nowTurn+2;
         s.score += point;
     }
     public static void communicate(int num, int[] d){
@@ -194,9 +199,11 @@ public class Main {
     public static void moveSanta() {
         for(Santa s: sList){
             if(!inRange(s.x, s.y)) continue; // 탈락한 산타
-            if(s.isDown < 0){
-                s.isDown += 1;
-                continue;
+            if(s.isDown > 0){
+            	if(s.isDown != nowTurn) {
+            		continue;
+            	}
+                s.isDown = 0;
             }
             int dist = calDist(s.x, s.y);
             int dir = -1;
