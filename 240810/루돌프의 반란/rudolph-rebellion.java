@@ -131,7 +131,7 @@ public class Main {
             int nx = rx + dir[0];
             int ny = ry + dir[1];
             if(!inRange(nx, ny)) continue;      // 루돌프가 이동할 위치가 범위를 벗어나면 pass
-            int nowDist = calDist(nx, ny, s.x, s.y);
+            int nowDist = calDist(rx, ry, s.x, s.y);
             if(nowDist < dist){
                 dist = nowDist;
                 tx = s.x;
