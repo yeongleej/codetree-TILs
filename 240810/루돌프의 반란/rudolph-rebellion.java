@@ -102,8 +102,8 @@ public class Main {
         }
         return false;
     }
-    public static int calDist(int a, int b, int x, int y){
-        return (a-x)*(a-x) + (b-y)*(b-y);
+    public static int calDist(int x, int y){
+        return (rx-x)*(rx-x) + (ry-y)*(ry-y);
     }
     public static int[] findDir(int x, int y){
         int nx = x - rx;
@@ -131,7 +131,7 @@ public class Main {
             int nx = rx + dir[0];
             int ny = ry + dir[1];
             if(!inRange(nx, ny)) continue;      // 루돌프가 이동할 위치가 범위를 벗어나면 pass
-            int nowDist = calDist(rx, ry, s.x, s.y);
+            int nowDist = calDist(s.x, s.y);
             if(nowDist < dist){
                 dist = nowDist;
                 tx = s.x;
@@ -210,14 +210,14 @@ public class Main {
             	}
                 s.isDown = 0;
             }
-            int dist = calDist(rx, ry, s.x, s.y);
+            int dist = calDist(s.x, s.y);
             int dir = -1;
             boolean isMove = false;
             for(int i=0; i<4; i++){
                 int nx = s.x + dx[i];
                 int ny = s.y + dy[i];
                 if(inRange(nx, ny) && g[nx][ny] == 0){
-                    int nowDist = calDist(rx, ry, nx, ny);
+                    int nowDist = calDist(nx, ny);
                     if(nowDist < dist){
                         dist = nowDist;
                         dir = i;
