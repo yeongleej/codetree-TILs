@@ -102,8 +102,8 @@ public class Main {
         }
         return false;
     }
-    public static int calDist(int x, int y){
-        return (rx-x)*(rx-x) + (ry-y)*(ry-y);
+    public static int calDist(int a, int b, int x, int y){
+        return (a-x)*(a-x) + (b-y)*(b-y);
     }
     public static int[] findDir(int x, int y){
         int nx = x - rx;
@@ -127,24 +127,28 @@ public class Main {
 
         for(Santa s : sList){
             if(!inRange(s.x, s.y)) continue;    // 탈락한 산타는 pass
-            int nowDist = calDist(s.x, s.y);
             int[] dir = findDir(s.x, s.y);
             int nx = rx + dir[0];
             int ny = ry + dir[1];
             if(!inRange(nx, ny)) continue;      // 루돌프가 이동할 위치가 범위를 벗어나면 pass
+            int nowDist = calDist(nx, ny, s.x, s.y);
             if(nowDist < dist){
                 dist = nowDist;
                 tx = s.x;
                 ty = s.y;
-                d = dir;
+                d[0] = dir[0];
+                d[1] = dir[1];
             } else if(nowDist == dist){
                 if(tx < s.x){
                     tx = s.x;
                     ty = s.y;
-                    d = dir;
+                    d[0] = dir[0];
+                    d[1] = dir[1];
                 } else if(tx == s.x && ty < s.y){
-                    ty = s.y;
-                    d = dir;
+                    tx = s.x;
+                	ty = s.y;
+                	d[0] = dir[0];
+                    d[1] = dir[1];
                 }
             }
         }
@@ -197,7 +201,8 @@ public class Main {
         // System.out.println("상호작용 후 대상:"+s.num+"("+s.x+","+s.y+")");
     }
     public static void moveSanta() {
-        for(Santa s: sList){
+        for(int p=1; p<P+1; p++){
+        	Santa s = sMap.get(p);
             if(!inRange(s.x, s.y)) continue; // 탈락한 산타
             if(s.isDown > 0){
             	if(s.isDown != nowTurn) {
@@ -205,14 +210,14 @@ public class Main {
             	}
                 s.isDown = 0;
             }
-            int dist = calDist(s.x, s.y);
+            int dist = calDist(rx, ry, s.x, s.y);
             int dir = -1;
             boolean isMove = false;
             for(int i=0; i<4; i++){
                 int nx = s.x + dx[i];
                 int ny = s.y + dy[i];
                 if(inRange(nx, ny) && g[nx][ny] == 0){
-                    int nowDist = calDist(nx, ny);
+                    int nowDist = calDist(rx, ry, nx, ny);
                     if(nowDist < dist){
                         dist = nowDist;
                         dir = i;
