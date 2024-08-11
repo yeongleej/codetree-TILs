@@ -80,7 +80,7 @@ public class Main {
                     nSet.add(g[nx][ny]);
                 }
             }
-            if(nSet.size() >= 2){
+            if(nSet.size() >= 1){
                 int total = 1;          // 해당 0칸 포함
                 for(Integer n : nSet){
                     total += bMap.get(n).size();
