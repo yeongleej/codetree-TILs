@@ -15,8 +15,25 @@ public class Main {
         T = br.readLine();
         N = T.length();
 
-        findStr(S);
-        System.out.println(ans);
+        // findStr(S);
+        // System.out.println(ans);
+        
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<S.length(); i++){
+            sb.append(S.charAt(i));
+            if(S.charAt(i) == T.charAt(N-1)){
+                int sLen = sb.length();
+                // System.out.println("i:"+i+", sb:"+sb);
+                // System.out.println("substring=> "+sb.substring(sLen-N, sLen));
+                if(sb.substring(sLen-N, sLen).equals(T)){
+                    // System.out.println("delete substring");
+                    sb.delete(sLen-N, sLen);
+                }
+            }
+        }
+        
+        System.out.println(sb);
+
     }
     public static void findStr(String str){
         boolean isFind = true;
