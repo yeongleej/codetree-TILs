@@ -23,8 +23,8 @@ public class Main {
         for(int i=0; i<str.length()-N+1; i++){
             // System.out.println(str.substring(i, i+N));
             if(str.substring(i, i+N).equals(T)){
-                String nStr = str.substring(0, i)+str.substring(i+N);
-                findStr(nStr);
+                // String nStr = str.substring(0, i)+str.substring(i+N);
+                findStr(str.substring(0, i)+str.substring(i+N));
                 isFind = false;
                 break;
             }
