@@ -25,7 +25,7 @@ public class Main {
                 int sLen = sb.length();
                 // System.out.println("i:"+i+", sb:"+sb);
                 // System.out.println("substring=> "+sb.substring(sLen-N, sLen));
-                if(sb.substring(sLen-N, sLen).equals(T)){
+                if(sb.length() >= N && sb.substring(sLen-N, sLen).equals(T)){
                     // System.out.println("delete substring");
                     sb.delete(sLen-N, sLen);
                 }
