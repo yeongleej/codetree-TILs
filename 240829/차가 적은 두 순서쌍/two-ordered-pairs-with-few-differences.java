@@ -3,49 +3,42 @@ import java.io.*;
 
 public class Main {
 
-    static int N;
-    static int[] arr;
-    static List<Integer> aList;
-    static List<Integer> bList;
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        N = Integer.parseInt(st.nextToken());
-        arr = new int[N];
-
-        st = new StringTokenizer(br.readLine());
-        for(int i=0; i<N; i++){
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
-        
-        List<Integer> sums = new ArrayList<>();
-
-        // Generate all possible sums of pairs
-        for (int i = 0; i < N; i++) {
-            for (int j = i + 1; j < N; j++) {
-                sums.add(arr[i] + arr[j]);
-            }
-        }
-
-        // Sort the sums to use two pointers technique
-        Collections.sort(sums);
-        // System.out.println(sums);
-
-        int minDifference = Integer.MAX_VALUE;
-        int len = sums.size();
-
-        // Compare every pair of sums
-        for (int i = 0; i < len; i++) {
-            for (int j = i + 1; j < len; j++) {
-                int diff = Math.abs(sums.get(i) - sums.get(j));
-                minDifference = Math.min(minDifference, diff);
-            }
-        }
-
-        System.out.println(minDifference);
-
-    }
-
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int arr[] = new int[N];
+		for (int i = 0; i < N; i++)
+			arr[i] = Integer.parseInt(st.nextToken());
+		Arrays.sort(arr);
+		int min = Integer.MAX_VALUE;
+		for (int i = 0; i < N; i++) {
+			for (int j = i + 1; j < N; j++) {
+				int snowMan1 = arr[i] + arr[j];
+				int start = 0;
+				int end = N - 1;
+				while (start < end) {
+					if (start == i || start == j) {
+						start++;
+						continue;
+					}
+					if (end == i || end == j) {
+						end--;
+						continue;
+					}
+					int snowMan2 = arr[start] + arr[end];
+					min = Math.min(min, Math.abs(snowMan1 - snowMan2));
+					if (snowMan1 > snowMan2)
+						start++;
+					else if (snowMan1 < snowMan2)
+						end--;
+					else {
+						System.out.println(0);
+						return;
+					}
+				}
+			}
+		}
+		System.out.println(min);
+	}
 }
