@@ -4,11 +4,11 @@ public class Main {
     
     static int N, K;
     static int[] srr;
+    static int[] prr;
     static class Person {
-        int pos, cnt;
-        public Person(int pos, int cnt){
+        int pos;
+        public Person(int pos){
             this.pos = pos;
-            this.cnt = cnt;
         }
     }
 
@@ -30,56 +30,67 @@ public class Main {
         int test = 1;
         int fail = 0;
         int start = 0;
-        boolean[] visited = new boolean[2*N];
-        // start = ((start-1)+M) % M;
-        // System.out.println(start);
-        Queue<Person> q = new LinkedList<>();
+        // boolean[] visited = new boolean[2*N];
+        
+        prr = new int[2*N];     // prr[i] = i칸에 있는 사람의 이동횟수
+
+        // Queue<Person> q = new LinkedList<>();
         while(true){
-            // System.out.println("t:"+test);
-            // System.out.println(Arrays.toString(visited));
+            // System.out.println("t:"+test+" s:"+start);
+            // System.out.println(Arrays.toString(prr));
             // System.out.println(Arrays.toString(srr));
-            // 무빙워크 회전 + 사람들 이동카운트 조정
+
+            // # 무빙워크 회전 + 사람들 이동카운트 조정
             start = ((start-1)+M) % M;
-            int size = q.size();
-            for(int i=0; i<size; i++){
-                Person now = q.poll();
-                now.cnt++;
-                if(now.cnt == N) continue;
-                q.add(now);
-            }
 
-            // 사람이동 + 안정성 확인
-            size = q.size();
-            for(int i=0; i<size; i++){
-                Person now = q.poll();
-                int next = (now.pos+1) % M;
-                if(!visited[next] && srr[next] > 0){
-                    visited[now.pos] = false;
-                    visited[next] = true;
-                    now.pos = next;
-                    now.cnt++;
-                    srr[next]--;
-                    if(srr[next] == 0) fail++;
+            for(int i=0; i<M; i++){
+                // 무빙워크 끝에 위치한 사람 out
+                if(prr[i]+1 == N){
+                    prr[i] = 0;
                 }
-                if(now.cnt == N) continue;
-                q.add(now);
+                else if(prr[i] > 0){
+                    prr[i]++;
+                }
             }
-            if(fail >= K) break;
 
-            // 사람 증가 + 안정성 확인
-            if(!visited[start] && srr[start] > 0){
-                q.add(new Person(start, 1));
-                visited[start] = true;
+            // System.out.println("무빙워크 회전후");
+            // System.out.println(Arrays.toString(prr));
+            // System.out.println(Arrays.toString(srr));
+            // # 사람이동 + 안정성 확인
+            boolean isContinue = true;
+            for(int i=0; i<M; i++){
+                int next = (i+1) % M;
+                // 사람이동
+                if(prr[i]!=0 && prr[next]==0 && srr[next] > 0){
+                    prr[next] = prr[i] + 1;
+                    srr[next]--;
+                    prr[i] = 0;
+                    if(prr[next] == N) prr[next] = 0;   // out
+                    if(srr[next] == 0) fail++;
+                    if(fail >= K) {
+                        isContinue = false;
+                        break;
+                    }
+                }
+            }
+            // System.out.println("사람이동 후");
+            // System.out.println(Arrays.toString(prr));
+            // System.out.println(Arrays.toString(srr));
+            if(!isContinue || fail >= K) break;
+
+
+            // # 사람 증가 + 안정성 확인
+            if(prr[start] == 0 && srr[start] > 0){
+                prr[start] = 1;
                 srr[start]--;
                 if(srr[start] == 0) fail++;
             }
-
             if(fail >= K) break;
 
             // 다음 테스트 진행
             test++;
         }
-        // System.out.println(Arrays.toString(visited));
+        // System.out.println(Arrays.toString(prr));
         // System.out.println(Arrays.toString(srr));
 
         System.out.println(test);
