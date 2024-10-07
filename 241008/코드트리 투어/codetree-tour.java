@@ -170,12 +170,10 @@ public class Main {
 		}
 	}
 	public static void refreshProduct() {
-		List<Product> tList = new ArrayList<>();
 		for(Product p: pList) {
-			tList.add(new Product(p.id, p.revenue, p.dest, distance[p.dest]));
+			p.cost = distance[p.dest];
+//			tList.add(new Product(p.id, p.revenue, p.dest, distance[p.dest]));
 		}
-		
-		pList = tList;
 	}
 
 }
