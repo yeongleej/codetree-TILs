@@ -32,6 +32,7 @@ public class Main {
             // System.out.println(idx);
             // substring(0, word.length())
             if(idx!= -1 && idx+n < N 
+                && srr[idx+n-1].length() >= word.length()
                 && srr[idx+n-1].substring(0, word.length()).equals(word)) {
                 System.out.println(sMap.get(srr[idx+n-1]));
             } else {
