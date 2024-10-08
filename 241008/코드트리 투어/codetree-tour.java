@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Main {
 	
-	final static int INF = 0x7fffffff;
+	final static int INF = 2_000_000_001;
 	static int Q, N, M;
 	static List<Node>[] g;
 	static boolean[] isDelete;
@@ -99,6 +99,9 @@ public class Main {
 				isMade[id] = true;
 				pList.add(new Product(id, revenue, dest, revenue-distance[dest]));
 				
+//				System.out.println("add");
+//				System.out.println(pList);
+				
 			} else if(type == 300) {
 				// 여행상품 취소(삭제)
 				int id = Integer.parseInt(st.nextToken());
@@ -108,6 +111,7 @@ public class Main {
 				
 			} else if(type == 400) {
 				// 최적의 상품 판매, 없으면 -1 출력
+//				System.out.println("sell");
 //				System.out.println(pList);
 				
 				sellProduct();
@@ -126,6 +130,8 @@ public class Main {
 				
 				// 거리 재정비
 				refreshProduct();
+//				System.out.println("refresh: "+ns);
+//				System.out.println(pList);
 			}
 		}
 
@@ -150,6 +156,7 @@ public class Main {
 	}
 	public static void deleteProduct(int id) {
 		if(isMade[id]) isDelete[id] = true;
+		
 	}
 	public static void sellProduct() {
 		int ans = -1;
@@ -168,10 +175,10 @@ public class Main {
 		// 정답 출력
 		System.out.println(ans);
 		
-		// 판매가능한 상품이 있다면 삭제
-		if(ans != -1) {
-			deleteProduct(ans);
-		}
+//		// 판매가능한 상품이 있다면 삭제
+//		if(ans != -1) {
+//			deleteProduct(ans);
+//		}
 		
 	}
 	public static void refreshProduct() {
