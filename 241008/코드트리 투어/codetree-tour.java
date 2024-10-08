@@ -3,11 +3,12 @@ import java.io.*;
 
 public class Main {
 	
-	static int INF = Integer.MAX_VALUE;
+	static int INF = 1_000_000_001;
 	static int Q, N, M;
 	static List<Node>[] g;
+	static boolean[] isDelete;
 	static int[] distance;
-	static List<Product> pList;
+	static PriorityQueue<Product> pList;
 	static class Node implements Comparable<Node> {
 		int u, dist;
 		public Node(int u, int dist) {
@@ -25,35 +26,39 @@ public class Main {
 		
 	}
 	static class Product implements Comparable<Product> {
-		int id, revenue, dest, cost;
-		public Product(int id, int revenue, int dest, int cost) {
+		int id, revenue, dest, profit;
+		public Product(int id, int revenue, int dest, int profit) {
 			this.id = id;
 			this.revenue = revenue;
 			this.dest = dest;
-			this.cost = cost;
+			this.profit = profit;
 		}
 		
 		@Override
 		public int compareTo(Product other) {
-			if((this.revenue - this.cost) == (other.revenue-other.cost)) {
+			if(this.profit == other.profit) {
 				return this.id - other.id;
 			}
-			return (other.revenue-other.cost) - (this.revenue - this.cost);
+			return other.profit - this.profit;
 		}
 
 		@Override
 		public String toString() {
-			return "Product [id=" + id + ", revenue=" + revenue + ", dest=" + dest + ", cost=" + cost + "]";
+			return "Product [id=" + id + ", revenue=" + revenue + ", dest=" + dest + ", profit=" + profit + "]";
 		}
+		
+		
 		
 	}
 	
 	public static void main(String[] args) throws IOException{
+//		System.setIn(new FileInputStream("src/day1007/코드트리투어.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		
 		Q = Integer.parseInt(st.nextToken());
-		pList = new ArrayList<>();
+		pList = new PriorityQueue<>();
+		isDelete = new boolean[30001];
 		for(int q=0; q<Q; q++) {
 			st = new StringTokenizer(br.readLine());
 			int type = Integer.parseInt(st.nextToken());
@@ -88,12 +93,13 @@ public class Main {
 				int id = Integer.parseInt(st.nextToken());
 				int revenue = Integer.parseInt(st.nextToken());
 				int dest = Integer.parseInt(st.nextToken());
-				pList.add(new Product(id, revenue, dest, distance[dest]));
+				
+				pList.add(new Product(id, revenue, dest, revenue-distance[dest]));
 				
 			} else if(type == 300) {
 				// 여행상품 취소(삭제)
 				int id = Integer.parseInt(st.nextToken());
-//				System.out.println("delete:"+id+" "+pList);
+//				System.out.println("delete:"+id);
 				deleteProduct(id);
 
 				
@@ -140,24 +146,20 @@ public class Main {
 		}
 	}
 	public static void deleteProduct(int id) {
-		List<Product> tList = new ArrayList<>();
-		for(Product p: pList) {
-			if(p.id == id) continue;
-			tList.add(p);
-		}
-		pList = tList;
+		isDelete[id] = true;
 		
 	}
 	public static void sellProduct() {
-		Collections.sort(pList);
-		
 		int ans = -1;
-		for(int i=0; i<pList.size(); i++) {
-			Product now = pList.get(i);
-//			System.out.println(">> "+now);
-			if(now.cost == INF) continue;
-			if(now.revenue - now.cost >= 0) {
-				ans = now.id;
+		int size = pList.size();
+
+		while(!pList.isEmpty()) {
+			Product p = pList.peek();
+			if(p.profit < 0) break;
+			
+			pList.poll();
+			if(!isDelete[p.id]) {
+				ans = p.id;
 				break;
 			}
 		}
@@ -168,12 +170,20 @@ public class Main {
 		if(ans != -1) {
 			deleteProduct(ans);
 		}
+		
 	}
 	public static void refreshProduct() {
-		for(Product p: pList) {
-			p.cost = distance[p.dest];
-//			tList.add(new Product(p.id, p.revenue, p.dest, distance[p.dest]));
+		PriorityQueue<Product> npq = new PriorityQueue<>();
+		while(!pList.isEmpty()) {
+			Product now = pList.poll();
+			if(!isDelete[now.id]) {
+				now.profit = now.revenue - distance[now.dest];
+				npq.add(now);
+			}
 		}
+		
+		pList = npq;
+		
 	}
 
 }
