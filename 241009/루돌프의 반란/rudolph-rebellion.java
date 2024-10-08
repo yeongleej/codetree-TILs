@@ -4,6 +4,7 @@ import java.io.*;
 public class Main {
 	
 	static int N, M, P, C, D;
+	static int t;
 	// 루돌프 위치
 	static int rx, ry;
 	static Santa[] srr;
@@ -60,7 +61,7 @@ public class Main {
 		
 		
 		// 턴 반복
-		int t = 1;
+		t = 1;
 		while(M > 0) {
 //			System.out.println("TRUN "+t);
 //			print();
@@ -172,8 +173,9 @@ public class Main {
 		// 산타 이동 && 기절 처리
 		Santa now = srr[num];
 		// 기절
-		if(type == D) now.rest = 1;
-		else now.rest = 2;
+//		if(type == D) now.rest = 1;
+//		else now.rest = 2;
+		now.rest = t+2;
 		
 		int nx = x + dx[dir]*type;
 		int ny = y + dy[dir]*type;
@@ -239,8 +241,8 @@ public class Main {
 		for(int i=1; i<P+1; i++) {
 			Santa now = srr[i];
 			if(isDie[i]) continue;	// 탈락한 산타
-			if(now.rest > 0) {		// 기절 산타
-				now.rest--;
+			if(now.rest > t) {		// 기절 산타
+//				now.rest--;
 				continue;
 			}
 			int dir = -1;
