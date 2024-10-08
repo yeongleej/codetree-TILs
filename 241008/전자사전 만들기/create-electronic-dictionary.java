@@ -47,7 +47,7 @@ public class Main {
         int ans = -1;
         while(s <= e) {
             int mid = (s+e) / 2;
-            if(srr[mid].compareTo(word) > 0) {
+            if(srr[mid].compareTo(word) >= 0) {
                 ans = mid;
                 e = mid - 1;
             } else {
