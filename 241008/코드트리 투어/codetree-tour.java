@@ -3,10 +3,11 @@ import java.io.*;
 
 public class Main {
 	
-	static int INF = 1_000_000_001;
+	final static int INF = 0x7fffffff;
 	static int Q, N, M;
 	static List<Node>[] g;
 	static boolean[] isDelete;
+	static boolean[] isMade;
 	static int[] distance;
 	static PriorityQueue<Product> pList;
 	static class Node implements Comparable<Node> {
@@ -59,6 +60,7 @@ public class Main {
 		Q = Integer.parseInt(st.nextToken());
 		pList = new PriorityQueue<>();
 		isDelete = new boolean[30001];
+		isMade = new boolean[30001];
 		for(int q=0; q<Q; q++) {
 			st = new StringTokenizer(br.readLine());
 			int type = Integer.parseInt(st.nextToken());
@@ -94,6 +96,7 @@ public class Main {
 				int revenue = Integer.parseInt(st.nextToken());
 				int dest = Integer.parseInt(st.nextToken());
 				
+				isMade[id] = true;
 				pList.add(new Product(id, revenue, dest, revenue-distance[dest]));
 				
 			} else if(type == 300) {
@@ -146,8 +149,7 @@ public class Main {
 		}
 	}
 	public static void deleteProduct(int id) {
-		isDelete[id] = true;
-		
+		if(isMade[id]) isDelete[id] = true;
 	}
 	public static void sellProduct() {
 		int ans = -1;
