@@ -4,7 +4,6 @@ import java.io.*;
 public class Main {
 	
 	static int N, Q;
-	static int[] level;
 	static int[] parents;
 	static int[] authority;
 	static boolean[] settings;
@@ -19,7 +18,6 @@ public class Main {
 		N = Integer.parseInt(st.nextToken());
 		Q = Integer.parseInt(st.nextToken());
 
-		level = new int[N+1];
 		parents = new int[N+1];
 		authority = new int[N+1];
 
@@ -42,17 +40,6 @@ public class Main {
 				}
 				for(int i=1; i<N+1; i++) {
 					authority[i] = Integer.parseInt(st.nextToken());
-				}
-				
-				// 트리의 level(높이) 설정
-				int d = 1;
-				int nowP = 0;
-				for(int i=1; i<N+1; i++) {
-					if(nowP != parents[i]) {
-						nowP = parents[i];
-						d++;
-					}
-					level[i] = d;
 				}
 				
 //				System.out.println("paretns: "+Arrays.toString(parents));
