@@ -4,7 +4,6 @@ import java.io.*;
 public class Main {
 	
 	static int N, M, K, C;
-	static int nowYear;
 	static int total;
 	// 나무 & 벽
 	static int[][] g;
@@ -69,7 +68,8 @@ public class Main {
 		
 		total = 0;
 		for(int m=1; m<M+1; m++) {
-			nowYear = m;
+            // 0. 제초제 감소
+            control();
 			
 			// 1. 나무 성장
 			growTree();
@@ -81,7 +81,7 @@ public class Main {
 			// 3-2. 제초제 뿌리기
 			total += spot.tCnt;
 			g[spot.x][spot.y] = 0;
-			p[spot.x][spot.y] = C;
+			p[spot.x][spot.y] = C+1;
 			for(int i=0; i<4; i++) {
 				spread(spot.x, spot.y, i, 1);
 			}
@@ -143,7 +143,7 @@ public class Main {
 						if(!inRange(nx, ny)) continue;
 						if(g[nx][ny] > 0) continue;    // 다른 나무칸 X
 						if(g[nx][ny] == -1) continue;  // 벽 X
-						if(p[nx][ny] != 0 && p[nx][ny] >= nowYear) continue; // 제조체 남아있음 X
+						if(p[nx][ny] > 0) continue; // 제조체 남아있음 X
 						
 						dList.add(d);
 					}
@@ -208,14 +208,21 @@ public class Main {
 		if(!inRange(nx, ny)) return;
 		// 벽 or 빈칸 : 해당칸까지 spread
 		if(g[nx][ny] <= 0) { 
-			p[nx][ny] = nowYear+C;
+			p[nx][ny] = C+1;
 			return;	
 		}
 		
-		p[nx][ny] = nowYear+C;
+		p[nx][ny] = C+1;
 		g[nx][ny] = 0;
 
 		spread(x, y, d, depth+1);
 	}
+    public static void control() {
+        for(int i=0; i<N; i++) {
+            for(int j=0; j<N; j++) {
+                if(p[i][j] > 0) p[i][j]--;
+            }
+        }
+    }
 
 }
