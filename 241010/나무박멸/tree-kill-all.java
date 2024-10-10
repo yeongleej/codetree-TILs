@@ -44,6 +44,7 @@ public class Main {
 		}
 		
 		
+		
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -65,55 +66,26 @@ public class Main {
 			}
 		}
 		
-//		print(g);
-		
-//		nowYear = 1;
-//		System.out.println("nowYear: "+nowYear);
-//		
-//		// 1. 나무 성장
-//		System.out.println("growTree");
-//		growTree();
-//		print(g);
-//		// 2. 나무 번식
-//		System.out.println("breedTree");
-//		breedTree();
-//		print(g);
-//		// 3-1. 제초제 뿌릴 곳 선정
-//		System.out.println("selectPos");
-//		Pos spot = selectPos();
-//		System.out.println(spot);
-//		// 3-2. 제초제 뿌리기
-//		System.out.println("spread");
-//		total += spot.tCnt;
-//		g[spot.x][spot.y] = 0;
-//		for(int i=0; i<4; i++) {
-//			spread(spot.x, spot.y, i, 1);
-//		}
-//		System.out.println("g");
-//		print(g);
-//		System.out.println("p");
-//		print(p);
-		
 		
 		total = 0;
 		for(int m=1; m<M+1; m++) {
 			nowYear = m;
 			
-			// 1. 나무 성장;
+			// 1. 나무 성장
 			growTree();
-			
 			// 2. 나무 번식
 			breedTree();
-
 			// 3-1. 제초제 뿌릴 곳 선정
 			Pos spot = selectPos();
-			
+			if(spot.tCnt == -1) continue;
 			// 3-2. 제초제 뿌리기
 			total += spot.tCnt;
 			g[spot.x][spot.y] = 0;
+			p[spot.x][spot.y] = C;
 			for(int i=0; i<4; i++) {
 				spread(spot.x, spot.y, i, 1);
 			}
+			
 		}
 		System.out.println(total);
 		
@@ -222,7 +194,9 @@ public class Main {
 				pq.add(new Pos(x, y, rCnt));
 			}
 		}
-		
+		if(pq.isEmpty()) {
+			return new Pos(-1, -1, -1);
+		}
 		return pq.poll();
 	}
 	public static void spread(int x, int y, int d, int depth) {
