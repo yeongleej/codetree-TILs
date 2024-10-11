@@ -64,22 +64,6 @@ public class Main {
 		}
 		
 	}
-	static class State {
-		Pos p;
-		// 경로 리스트
-		List<Pos> dList;
-		public State(Pos p, List<Pos> dList) {
-			super();
-			this.p = p;
-			this.dList = dList;
-		}
-		@Override
-		public String toString() {
-			return "State [p=" + p + ", dList=" + dList + "]";
-		}
-		
-		
-	}
 
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -97,15 +81,14 @@ public class Main {
 			}
 		}
 		
-		
 		// 초기 포탑리스트 생성(부서지지 않은)
 		pList = new ArrayList<>();
 		initPotop();
 		
 		// 현재 턴 기록
 		T = 1;
+		
 		for(int k=0; k<K; k++) {
-			
 			// 0-1. 공격 참여여부 리스트 초기화
 			w = new boolean[N][M];
 			
@@ -116,31 +99,25 @@ public class Main {
 			// 1-1. 공격력 증가 + 공격시간 기록
 			increasePower();
 			
-			// 2. 공격 대상자 선정 Collections.reveserOrder()
+			// 1-2. 공격 대상자 선정 & 공격
 			strong = pList.get(pList.size()-1);
+			attack();
+
 			
 			// 2-1. 공격 방법 선택 => 1)레이저 2)포탄던지기
 			// 2-2. 레이저
-			aList = new ArrayList<>();
-			useLaser();
+			boolean isOk = useLaser();
 			
-			// 2-3. 포탄던지기
-			if(aList.size() == 0) {
+			if(!isOk) {
+				// 2-3. 포탄던지기
 				useBomb();
 			}
 			
-			// 3. 공격하기 : g와 pList 모두 처리하기
-			attack();
-
-			// 지속 여부 결정 ;부서지지 않은 포탑이 1개면 즉시 종료
+			// 지속 여부 결정 : 부서지지 않은 포탑이 1개면 즉시 종료
 			if(!isCon()) break; 
-			
-			// 공격에 참가한 참가자들 처리 
-			isAttack();
 			
 			// 4. 공격에 참여하지 않은 포탄들 공격력 증가
 			otherUpPower();
-
 			
 			// 5. 포탑리스트 재정비
 			remakePList();
@@ -148,12 +125,9 @@ public class Main {
 			T++;
 		}
 		
-		// System.out.println(pList);
 		Collections.sort(pList);
 		int ans = pList.get(pList.size()-1).power;
 		System.out.println(ans);
-		
-		
 		
 	}
 	public static void printG() {
@@ -182,111 +156,112 @@ public class Main {
 	}
 	public static void increasePower() {
 		weak.power += (N+M);
-		g[weak.x][weak.y] += (N+M);
+		g[weak.x][weak.y] = weak.power;
 		weak.lastTime = T;
+		w[weak.x][weak.y] = true;
+		
 	}
-	public static void useLaser() {
-		Queue<State> q = new LinkedList<>();
+	public static void attack() {
+		strong.power = Math.max(0, strong.power-weak.power);
+		g[strong.x][strong.y] = strong.power;
+		w[strong.x][strong.y] = true;
+	}
+	public static boolean useLaser() {
+		Queue<Pos> q = new LinkedList<>();
 		boolean[][] visited = new boolean[N][M];
+        Pos[][] predecessor = new Pos[N][M];
+        boolean isOk = false;
+
+        // predecessor 초기화: 경로 배열
+        for(int i=0; i<N; i++) {
+            for(int j=0; j<M; j++) {
+                predecessor[i][j] = new Pos(0, 0);
+            }
+        }
 		
 		// 가장 약한 포탑부터 시작
-		List<Pos> dList = new ArrayList<>();
-		q.add(new State(new Pos(weak.x, weak.y), dList));
+		q.add(new Pos(weak.x, weak.y));
 		visited[weak.x][weak.y] = true;
 		
 		// 최종 경로 리스트
-		List<Pos> res = new ArrayList<>();
+//		List<Pos> res = new ArrayList<>();
 		while(!q.isEmpty()) {
-			State now = q.poll();
-			Pos np = now.p;
-			if(np.x == strong.x && np.y == strong.y) {
-				res = now.dList;
+			Pos now = q.poll();
+			if(now.x == strong.x && now.y == strong.y) {
+//				res = now.dList;
+				isOk  = true;
 				break;
 			}
 			
 			// 우선순위: 우하좌상
 			for(int i=0; i<4; i++) {
-				int nx = (np.x + dx[i] + N) % N;
-				int ny = (np.y + dy[i] + M) % M;
+				int nx = (now.x + dx[i] + N) % N;
+				int ny = (now.y + dy[i] + M) % M;
 				if(g[nx][ny] == 0) continue;
 				if(visited[nx][ny]) continue;
 				// 방문가능
 				visited[nx][ny] = true;
-				// 경로 복사
-				List<Pos> cList = new ArrayList<>();
-				for(Pos pos: now.dList) {
-					cList.add(pos);
-				}
-				cList.add(new Pos(nx, ny));
-				q.add(new State(new Pos(nx, ny), cList));
+				// 경로 저장
+				predecessor[nx][ny] = now;
+				q.add(new Pos(nx, ny));
 			}
 		}
 		
-		if(res.size() == 0) return;
-		
-		// 가능한 경로가 있다면 포탑 리스트 생성
-		// System.out.println("res: "+res);
-		for(Potop p1: pList) {
-			// 마지막 도착점은 뺌
-			for(int i=0; i<res.size()-1; i++) {
-				Pos p2 = res.get(i);
-				if(p1.x == p2.x && p1.y==p2.y) {
-					aList.add(p1);
-				}
-			}
-		}
+        if(!isOk) return false;
+        
+//        //경로 출력
+//        System.out.println("route");
+//        for(int i=0; i<N; i++) {
+//            for(int j=0; j<M; j++) {
+//                System.out.print(predecessor[i][j]);
+//            }
+//            System.out.println();
+//        }
+
+        //경로의 포탑: 도착지부터 거꾸로 순회
+        Pos pre = predecessor[strong.x][strong.y];
+        while (true) {
+            if (pre.x == weak.x && pre.y == weak.y) {
+                break;
+            }
+            // 공격력 weak.power/2 감소 + 참여 처리
+            int hPower = weak.power / 2;
+            for(Potop p: pList) {
+            	if(pre.x == p.x && pre.y == p.y) {
+            		p.power = Math.max(0, p.power-hPower);
+            		g[p.x][p.y] = p.power;
+            		w[p.x][p.y] = true;
+            		break;
+            	}
+            }
+            
+            pre = predecessor[pre.x][pre.y];
+        }
+        return true;
 		
 	}
 	public static void useBomb() {
-		// 최종 경로 리스트
-		List<Pos> res = new ArrayList<>();
+		int hPower = weak.power / 2;
 		
 		for(int i=0; i<8; i++) {
 			int nx = (strong.x + dx[i] + N) % N;
-			int ny = (strong.y + dy[i] + N) % N;
+			int ny = (strong.y + dy[i] + M) % M;
 			// 부서진 곳이면 X
 			if(g[nx][ny] == 0) continue;
 			// 공격자는 X
 			if(nx == weak.x && ny == weak.y) continue;
-			res.add(new Pos(nx, ny));
-		}
-		
-		// 가능한 경로가 있다면 포탑 리스트 생성
-		// System.out.println("res: "+res);
-		for(Potop p1: pList) {
-			for(int i=0; i<res.size(); i++) {
-				Pos p2 = res.get(i);
-				if(p1.x == p2.x && p1.y==p2.y) {
-					aList.add(p1);
+			// 공격 진행
+			for(Potop p: pList) {
+				if(p.x == nx && p.y == ny) {
+					p.power = Math.max(0, p.power-hPower);
+					g[p.x][p.y] = p.power;
+					w[p.x][p.y] = true;
+					break;
 				}
 			}
 		}
 	}
-	public static void attack() {
-		// 공격자 공격
-		strong.power = Math.max(0, strong.power-weak.power);
-		g[strong.x][strong.y] = strong.power;
-		
-		// 경로들 공격
-		int hPower = weak.power / 2;
-		for(Potop p: aList) {
-			p.power = Math.max(0, p.power-hPower);
-			g[p.x][p.y] = p.power;
-		}
-	}
-	// 공격에 참가한 포탑들 체크
-	public static void isAttack() {
-		// 공격자
-		w[weak.x][weak.y] = true;
-		
-		// 대상자
-		w[strong.x][strong.y] = true;
-		
-		// 경로들
-		for(Potop p: aList) {
-			w[p.x][p.y] = true;
-		}
-	}
+
 	public static void otherUpPower() {
 		for(int i=0; i<N; i++) {
 			for(int j=0; j<M; j++) {
