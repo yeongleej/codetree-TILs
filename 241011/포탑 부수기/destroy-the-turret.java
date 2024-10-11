@@ -101,7 +101,6 @@ public class Main {
 			
 			// 1-2. 공격 대상자 선정 & 공격
 			strong = pList.get(pList.size()-1);
-			attack();
 
 			
 			// 2-1. 공격 방법 선택 => 1)레이저 2)포탄던지기
@@ -112,6 +111,9 @@ public class Main {
 				// 2-3. 포탄던지기
 				useBomb();
 			}
+			
+			// 2-4: 진짜 공격자에게 공격
+			attack();
 			
 			// 지속 여부 결정 : 부서지지 않은 포탑이 1개면 즉시 종료
 			if(!isCon()) break; 
